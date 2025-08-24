@@ -94,6 +94,13 @@ return {
       end,
       desc = 'Debug: open centered float',
     },
+    {
+      '<leader>dtb',
+      function()
+        require('dapui').toggle(3)
+      end,
+      desc = 'Debug: toggle the breakpoint window',
+    },
     -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
     {
       '<F7>',

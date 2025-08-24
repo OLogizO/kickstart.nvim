@@ -29,6 +29,29 @@ return {
           -- },
         },
         opts = {},
+        config = function()
+          local ls = require 'luasnip'
+          ls.setup {
+            update_events = { 'TextChanged', 'TextChangedI' },
+          }
+          local pathToConfig = vim.fn.stdpath 'config'
+          require('luasnip.loaders.from_lua').load { paths = { pathToConfig .. '/luasnippets' } }
+          vim.keymap.set({ 'i' }, '<C-e>', function()
+            ls.expand()
+          end, { silent = true, desc = 'luasnip: expand' })
+          vim.keymap.set({ 'i', 's' }, '<C-l>', function()
+            ls.jump(1)
+          end, { silent = true, desc = 'luasnip: jump forwards' })
+          vim.keymap.set({ 'i', 's' }, '<C-j>', function()
+            ls.jump(-1)
+          end, { silent = true, desc = 'luasnip: jump backwards' })
+
+          vim.keymap.set({ 'i', 's' }, '<C-o>', function()
+            if ls.choice_active() then
+              ls.change_choice(1)
+            end
+          end, { silent = true, desc = 'luasnip: change choice' })
+        end,
       },
       'folke/lazydev.nvim',
     },

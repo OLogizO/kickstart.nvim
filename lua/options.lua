@@ -7,7 +7,7 @@
 vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.o.relativenumber = true
+vim.o.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
@@ -71,4 +71,13 @@ vim.o.scrolloff = 10
 -- See `:help 'confirm'`
 vim.o.confirm = true
 
+-- personal remaps
+vim.keymap.set('n', '[b', ':bprevious<CR>', { silent = true, remap = false })
+vim.keymap.set('n', ']b', ':bnext<CR>', { silent = true, remap = false })
+vim.keymap.set('n', '[B', ':bfirst<CR>', { silent = true, remap = false })
+vim.keymap.set('n', ']B', ':blast<CR>', { silent = true, remap = false })
+vim.keymap.set('i', '<C-Q>', '<C-K>', { noremap = true })
+vim.keymap.set('c', '%%', function()
+  return vim.fn.expand '%:h' .. '/'
+end, { expr = true })
 -- vim: ts=2 sts=2 sw=2 et

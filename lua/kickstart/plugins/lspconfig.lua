@@ -30,6 +30,8 @@ return {
       'saghen/blink.cmp',
     },
     config = function()
+      -- personal remap: this line makes lsps work with unity. so i get autocompletion for monobehaviour and so on
+      vim.lsp.enable 'roslyn_ls'
       -- Brief aside: **What is LSP?**
       --
       -- LSP is an initialism you've probably heard, but might not understand what it is.

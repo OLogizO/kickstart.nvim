@@ -6,6 +6,9 @@
 -- be extended to other languages as well. That's why it's called
 -- kickstart.nvim and not kitchen-sink.nvim ;)
 
+local function openOnlyScopesWindow() -- layout 6 in this case is the scopes window. also the one i tend to use.
+  require('dapui').open { layout = 6 }
+end
 return {
   -- NOTE: Yes, you can install new plugins here!
   'mfussenegger/nvim-dap',
@@ -25,6 +28,7 @@ return {
     'leoluz/nvim-dap-go',
     'jbyuki/one-small-step-for-vimkind',
   },
+  lazy = false,
   keys = {
     -- Basic debugging keymaps, feel free to change to your liking!
     {
@@ -74,7 +78,6 @@ return {
       function()
         require('osv').launch { port = 8086 }
       end,
-      desc = 'Debug: Set Breakpoint',
       { noremap = true },
       desc = 'Debug: starts neovim debug server',
     },
@@ -94,13 +97,55 @@ return {
       end,
       desc = 'Debug: open centered float',
     },
+    -- window toggles
+    {
+      '<leader>dtc',
+      function()
+        require('dapui').toggle { layout = 1 }
+      end,
+      desc = 'Debug: toggle the console window',
+    },
+    {
+      '<leader>dtr',
+      function()
+        require('dapui').toggle { layout = 2 }
+      end,
+      desc = 'Debug: toggle the repl window',
+    },
+
+    {
+      '<leader>dtw',
+      function()
+        require('dapui').toggle { layout = 3 }
+      end,
+      desc = 'Debug: toggle the watches window',
+    },
+
+    {
+      '<leader>dtt',
+      function()
+        require('dapui').toggle { layout = 4 }
+      end,
+      desc = 'Debug: toggle the stacks window',
+    },
+
     {
       '<leader>dtb',
       function()
-        require('dapui').toggle(3)
+        require('dapui').toggle { layout = 5 }
       end,
       desc = 'Debug: toggle the breakpoint window',
     },
+
+    {
+      '<leader>dts',
+      function()
+        require('dapui').toggle { layout = 6 }
+      end,
+      desc = 'Debug: toggle the scopes window',
+    },
+    -- end of window toggles.
+
     -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
     {
       '<F7>',
@@ -163,6 +208,68 @@ return {
           disconnect = '⏏',
         },
       },
+      layouts = { -- each window is in its own layout so i can toggle them individually
+        {
+          elements = { -- 1
+            {
+              id = 'console',
+              size = 40,
+            },
+          },
+          position = 'left',
+          size = 40,
+        },
+        {
+          elements = { -- 2
+            {
+              id = 'repl',
+              size = 40,
+            },
+          },
+          position = 'left',
+          size = 40,
+        },
+        {
+          elements = { -- 3
+            {
+              id = 'watches',
+              size = 40,
+            },
+          },
+          position = 'left',
+          size = 40,
+        },
+        {
+          elements = { -- 4
+            {
+              id = 'stacks',
+              size = 40,
+            },
+          },
+          position = 'left',
+          size = 40,
+        },
+        {
+          elements = { -- 5
+            {
+              id = 'breakpoints',
+              size = 40,
+            },
+          },
+          position = 'left',
+          size = 40,
+        },
+        {
+          elements = { -- 6
+            {
+              id = 'scopes',
+              size = 40,
+            },
+          },
+          position = 'left',
+          size = 40,
+        },
+      },
     }
 
     -- Change breakpoint icons
@@ -177,7 +284,7 @@ return {
     --   vim.fn.sign_define(tp, { text = icon, texthl = hl, numhl = hl })
     -- end
 
-    dap.listeners.after.event_initialized['dapui_config'] = dapui.open
+    dap.listeners.after.event_initialized['dapui_config'] = openOnlyScopesWindow
     dap.listeners.before.event_terminated['dapui_config'] = dapui.close
     dap.listeners.before.event_exited['dapui_config'] = dapui.close
 

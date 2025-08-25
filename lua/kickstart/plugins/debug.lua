@@ -5,7 +5,58 @@
 -- Primarily focused on configuring the debugger for Go, but can
 -- be extended to other languages as well. That's why it's called
 -- kickstart.nvim and not kitchen-sink.nvim ;)
-local function setUpUnityDebugger() end
+local function setUpUnityDebugger()
+  local dap = require 'dap'
+  -- first run unity using vs code with the extension. the copy the path here. make sure the vstuc-x.x.x part matches what your paths says..
+  local vstuc_path = vim.env.HOME .. '/.vscode/extensions/visualstudiotoolsforunity.vstuc-1.1.2/bin/'
+  dap.adapters.vstuc = {
+    type = 'executable',
+    command = 'dotnet',
+    args = { vstuc_path .. 'UnityDebugAdapter.dll' },
+    name = 'Attach to Unity',
+  }
+  dap.configurations.cs = {
+    {
+      type = 'vstuc',
+      request = 'attach',
+      name = 'Attach to Unity',
+      logFile = vim.fs.joinpath(vim.fn.stdpath 'data') .. '/vstuc.log',
+      projectPath = function() -- function to get path to cs files
+        local path = vim.fn.expand '%:p' -- gets the current file of the buffer.
+        while true do
+          local new_path = vim.fn.fnamemodify(path, ':h') -- goes to parent directory
+          if new_path == path then -- we are at root, exit.
+            return ''
+          end
+          path = new_path
+          local assets = vim.fn.glob(path .. '/Assets') -- does the current folder contain Assets?
+          if assets ~= '' then -- if glob finds assets it returns its parent directory, otherwise an empty string
+            return path
+          end
+        end
+      end,
+      endPoint = function() -- at what address and port do we connect to.
+        local system_obj = vim.system({ 'dotnet', vstuc_path .. 'UnityAttachProbe.dll' }, { text = true }) -- run the unity attach code. which returns json
+        local probe_result = system_obj:wait(2000).stdout -- wait 2 sec then read output
+        if probe_result == nil or #probe_result == 0 then -- incase you are not running unity
+          print 'No endpoint found (is unity running?)'
+          return ''
+        end
+        for json in vim.gsplit(probe_result, '\n') do -- for each line in the json
+          if json ~= '' then -- that is not empty
+            local probe = vim.json.decode(json) -- decode the json
+            for _, p in pairs(probe) do -- take out each pair in the decoded json
+              if p.isBackground == false then -- if it contains the value isBackground false
+                return p.address .. ':' .. p.debuggerPort -- then it contains the data we want.
+              end
+            end
+          end
+        end
+        return ''
+      end,
+    },
+  }
+end
 
 local function openOnlyScopesWindow() -- layout 6 in this case is the scopes window. also the one i tend to use.
   require('dapui').open { layout = 6 }
@@ -160,54 +211,7 @@ return {
     local dap = require 'dap'
     local dapui = require 'dapui'
 
-    local vstuc_path = vim.env.HOME .. '/.vscode/extensions/visualstudiotoolsforunity.vstuc-1.1.2/bin/'
-    dap.adapters.vstuc = {
-      type = 'executable',
-      command = 'dotnet',
-      args = { vstuc_path .. 'UnityDebugAdapter.dll' },
-      name = 'Attach to Unity',
-    }
-    dap.configurations.cs = {
-      {
-        type = 'vstuc',
-        request = 'attach',
-        name = 'Attach to Unity',
-        logFile = vim.fs.joinpath(vim.fn.stdpath 'data') .. '/vstuc.log',
-        projectPath = function()
-          local path = vim.fn.expand '%:p'
-          while true do
-            local new_path = vim.fn.fnamemodify(path, ':h')
-            if new_path == path then
-              return ''
-            end
-            path = new_path
-            local assets = vim.fn.glob(path .. '/Assets')
-            if assets ~= '' then
-              return path
-            end
-          end
-        end,
-        endPoint = function()
-          local system_obj = vim.system({ 'dotnet', vstuc_path .. 'UnityAttachProbe.dll' }, { text = true })
-          local probe_result = system_obj:wait(2000).stdout
-          if probe_result == nil or #probe_result == 0 then
-            print 'No endpoint found (is unity running?)'
-            return ''
-          end
-          for json in vim.gsplit(probe_result, '\n') do
-            if json ~= '' then
-              local probe = vim.json.decode(json)
-              for _, p in pairs(probe) do
-                if p.isBackground == false then
-                  return p.address .. ':' .. p.debuggerPort
-                end
-              end
-            end
-          end
-          return ''
-        end,
-      },
-    }
+    setUpUnityDebugger()
 
     dap.adapters.nlua = function(callback, config)
       callback { type = 'server', host = config.host or '127.0.0.1', port = config.port or 8086 }

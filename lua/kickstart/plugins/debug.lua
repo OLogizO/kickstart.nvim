@@ -5,6 +5,7 @@
 -- Primarily focused on configuring the debugger for Go, but can
 -- be extended to other languages as well. That's why it's called
 -- kickstart.nvim and not kitchen-sink.nvim ;)
+local function setUpUnityDebugger() end
 
 local function openOnlyScopesWindow() -- layout 6 in this case is the scopes window. also the one i tend to use.
   require('dapui').open { layout = 6 }
@@ -158,6 +159,55 @@ return {
   config = function()
     local dap = require 'dap'
     local dapui = require 'dapui'
+
+    local vstuc_path = vim.env.HOME .. '/.vscode/extensions/visualstudiotoolsforunity.vstuc-1.1.2/bin/'
+    dap.adapters.vstuc = {
+      type = 'executable',
+      command = 'dotnet',
+      args = { vstuc_path .. 'UnityDebugAdapter.dll' },
+      name = 'Attach to Unity',
+    }
+    dap.configurations.cs = {
+      {
+        type = 'vstuc',
+        request = 'attach',
+        name = 'Attach to Unity',
+        logFile = vim.fs.joinpath(vim.fn.stdpath 'data') .. '/vstuc.log',
+        projectPath = function()
+          local path = vim.fn.expand '%:p'
+          while true do
+            local new_path = vim.fn.fnamemodify(path, ':h')
+            if new_path == path then
+              return ''
+            end
+            path = new_path
+            local assets = vim.fn.glob(path .. '/Assets')
+            if assets ~= '' then
+              return path
+            end
+          end
+        end,
+        endPoint = function()
+          local system_obj = vim.system({ 'dotnet', vstuc_path .. 'UnityAttachProbe.dll' }, { text = true })
+          local probe_result = system_obj:wait(2000).stdout
+          if probe_result == nil or #probe_result == 0 then
+            print 'No endpoint found (is unity running?)'
+            return ''
+          end
+          for json in vim.gsplit(probe_result, '\n') do
+            if json ~= '' then
+              local probe = vim.json.decode(json)
+              for _, p in pairs(probe) do
+                if p.isBackground == false then
+                  return p.address .. ':' .. p.debuggerPort
+                end
+              end
+            end
+          end
+          return ''
+        end,
+      },
+    }
 
     dap.adapters.nlua = function(callback, config)
       callback { type = 'server', host = config.host or '127.0.0.1', port = config.port or 8086 }

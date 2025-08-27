@@ -2,6 +2,8 @@ local pickers = require 'telescope.pickers'
 local finders = require 'telescope.finders'
 local make_entry = require 'telescope.make_entry'
 local conf = require('telescope.config').values
+local actions = require 'telescope.actions'
+local action_state = require 'telescope.actions.state'
 local M = {}
 
 local live_multigrep = function(opts)
@@ -44,6 +46,48 @@ local live_multigrep = function(opts)
     })
     :find()
 end
+
+local M = {}
+
+function M.getChangedfiles(opts)
+  opts = opts or {}
+
+  local git_root = vim.fn.systemlist('git rev-parse --show-toplevel')[1]
+  if not git_root or git_root == '' or string.find(git_root, 'fatal') then
+    vim.notify('Not in a git repo', vim.log.levels.WARN)
+    return
+  end
+
+  local dirty = vim.fn.systemlist 'git status --porcelain'
+  local files = {}
+
+  for _, line in ipairs(dirty) do
+    local rel_path = string.sub(line, 4)
+    table.insert(files, rel_path)
+  end
+
+  pickers
+    .new(opts, {
+      prompt_title = 'Git Working Files',
+      finder = finders.new_table { results = files },
+      sorter = conf.generic_sorter(opts),
+      cwd = git_root,
+
+      attach_mappings = function(prompt_bufnr, map)
+        actions.select_default:replace(function()
+          actions.close(prompt_bufnr)
+          local selection = action_state.get_selected_entry()
+          if selection and selection.value then
+            local full_path = git_root .. '/' .. selection.value
+            vim.cmd('edit ' .. vim.fn.fnameescape(full_path))
+          end
+        end)
+        return true
+      end,
+    })
+    :find()
+end
+
 M.setup = function()
   -- live_multigrep()
 end

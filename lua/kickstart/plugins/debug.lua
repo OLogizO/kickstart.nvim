@@ -88,35 +88,36 @@ return {
       function()
         require('dap').continue()
       end,
-      desc = 'Debug: Start/Continue',
+      desc = 'Debug: Start/[C]ontinue',
     },
     {
       '<leader>di',
       function()
         require('dap').step_into()
       end,
-      desc = 'Debug: Step Into',
+      desc = 'Debug: Step [I]nto',
     },
     {
       '<leader>do',
       function()
         require('dap').step_over()
       end,
-      desc = 'Debug: Step Over',
+      desc = 'Debug: Step [O]ver',
     },
     {
       '<leader>dO',
       function()
         require('dap').step_out()
       end,
-      desc = 'Debug: Step Out',
+      desc = 'Debug: Step [O]ut',
     },
     {
       '<leader>db',
       function()
         require('dap').toggle_breakpoint()
       end,
-      desc = 'Debug: Toggle Breakpoint',
+      desc = 'Debug: Toggle [B]reakpoint',
+    },
     {
       '<leader>dh',
       function()
@@ -129,7 +130,7 @@ return {
       function()
         require('dap').set_breakpoint(vim.fn.input 'Breakpoint condition: ')
       end,
-      desc = 'Debug: Set Breakpoint',
+      desc = 'Debug: Set [B]reakpoint',
     },
     {
       '<leader>dl',
@@ -137,7 +138,7 @@ return {
         require('osv').launch { port = 8086 }
       end,
       { noremap = true },
-      desc = 'Debug: starts neovim debug server',
+      desc = 'Debug: [l]aunch neovim debug server',
     },
     {
       '<leader>dw',
@@ -145,7 +146,7 @@ return {
         local widgets = require 'dap.ui.widgets'
         widgets.hover()
       end,
-      desc = 'Debug: open dap ui widgets',
+      desc = 'Debug: open dap ui [w]idgets',
     },
     {
       '<leader>df',
@@ -153,7 +154,7 @@ return {
         local widgets = require 'dap.ui.widgets'
         widgets.centered_float(widgets.frames)
       end,
-      desc = 'Debug: open centered float',
+      desc = 'Debug: open centered [f]loat',
     },
     -- window toggles
     {
@@ -161,14 +162,14 @@ return {
       function()
         require('dapui').toggle { layout = 1 }
       end,
-      desc = 'Debug: toggle the console window',
+      desc = 'Debug: [t]oggle the console [w]indow',
     },
     {
       '<leader>dtr',
       function()
         require('dapui').toggle { layout = 2 }
       end,
-      desc = 'Debug: toggle the repl window',
+      desc = 'Debug: [t]oggle the [r]epl window',
     },
 
     {
@@ -176,7 +177,7 @@ return {
       function()
         require('dapui').toggle { layout = 3 }
       end,
-      desc = 'Debug: toggle the watches window',
+      desc = 'Debug: [t]oggle the watches [w]indow',
     },
 
     {
@@ -184,7 +185,7 @@ return {
       function()
         require('dapui').toggle { layout = 4 }
       end,
-      desc = 'Debug: toggle the stacks window',
+      desc = 'Debug: [t]oggle [t]he stacks window',
     },
 
     {
@@ -192,7 +193,7 @@ return {
       function()
         require('dapui').toggle { layout = 5 }
       end,
-      desc = 'Debug: toggle the breakpoint window',
+      desc = 'Debug: [t]oggle the [b]reakpoint window',
     },
 
     {
@@ -200,7 +201,7 @@ return {
       function()
         require('dapui').toggle { layout = 6 }
       end,
-      desc = 'Debug: toggle the scopes window',
+      desc = 'Debug: [t]oggle the [s]copes window',
     },
     -- end of window toggles.
 

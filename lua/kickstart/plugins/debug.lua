@@ -117,6 +117,12 @@ return {
         require('dap').toggle_breakpoint()
       end,
       desc = 'Debug: Toggle Breakpoint',
+    {
+      '<leader>dh',
+      function()
+        require('dap').run_to_cursor()
+      end,
+      desc = 'Run To [H]ere',
     },
     {
       '<leader>dB',

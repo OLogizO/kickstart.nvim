@@ -6,7 +6,7 @@ local actions = require 'telescope.actions'
 local action_state = require 'telescope.actions.state'
 local M = {}
 
-local live_multigrep = function(opts)
+M.live_multigrep = function(opts)
   opts = opts or {}
   opts.cwd = opts.cwd or vim.uv.cwd()
   local finder = finders.new_async_job {
@@ -88,9 +88,5 @@ function M.getChangedfiles(opts)
     :find()
 end
 
-M.setup = function()
-  -- live_multigrep()
-end
-
-live_multigrep()
+M.getChangedfiles()
 return M

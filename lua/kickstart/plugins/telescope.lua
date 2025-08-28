@@ -90,6 +90,12 @@ return {
       vim.keymap.set('n', '<leader>su', telescope_custom.getChangedfiles, { desc = 'Get Uncommited Changed Files' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
+      vim.keymap.set('n', '<leader>en', function()
+        require('telescope.builtin').find_files {
+          cwd = vim.fs.joinpath(vim.fn.stdpath 'data', 'lazy'),
+        }
+      end, { desc = 'Search Git [C]ommits' })
+
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
         -- You can pass additional configuration to Telescope to change the theme, layout, etc.

@@ -25,3 +25,30 @@ local types = require 'luasnip.util.types'
 local parse = require('luasnip.util.parser').parse_snippet
 local ms = ls.multi_snippet
 local k = require('luasnip.nodes.key_indexer').new_key
+require('luasnip.session.snippet_collection').clear_snippets 'all'
+
+local function toPascalCase(args)
+  local words = vim.split(args[1][1], ' ')
+  local result = ''
+  for index, word in ipairs(words) do
+    local current = word:sub(1, 1):upper() .. word:sub(2, #word)
+    if index ~= #words then
+      current = current .. '_'
+    end
+    result = result .. current
+  end
+  return result
+end
+
+local branchTemplate = [[{desc}
+{type}/AB{id}{func}]]
+local choiceNode = c(1, { t 'feature', t 'bugfix' })
+local functionNode = f(toPascalCase, 3)
+local fmtNode = fmt(branchTemplate, {
+  type = choiceNode,
+  id = i(2, 'id'),
+  desc = i(3, 'insert'),
+  func = functionNode,
+})
+local snippet = s(';abb', fmtNode)
+ls.add_snippets('all', { snippet })

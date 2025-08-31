@@ -14,7 +14,6 @@ return {
         end
         vim.cmd('Git rebase -i HEAD~' .. count)
       end, 0)
-      vim.cmd('Git rebase -i HEAD~' .. vim.v.count)
     end, { desc = 'Git: [I]nteractive [R]ebase', expr = true })
     vim.keymap.set('n', '<leader>gic', ':Git rebase --continue', { desc = 'Git: rebase [c]ontinue' })
   end,

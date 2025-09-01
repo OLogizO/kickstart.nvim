@@ -17,5 +17,6 @@ return {
     end, { desc = 'Git: [I]nteractive [R]ebase', expr = true })
     vim.keymap.set('n', '<leader>gic', ':Git rebase --continue<CR>', { desc = 'Git: rebase [c]ontinue' })
     vim.keymap.set('n', '<leader>gia', ':Git rebase --abort<CR>', { desc = 'Git: rebase [a]bort' })
+    vim.keymap.set('n', '<leader>gl', ':Git log<CR>', { desc = 'Git: [l]og' })
   end,
 } -- :Git rebase -i HEAD~

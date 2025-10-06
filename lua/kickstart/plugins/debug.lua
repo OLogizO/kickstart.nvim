@@ -248,6 +248,16 @@ return {
       ensure_installed = {
         -- Update this to ensure that you have the debuggers for the langs you want
         'delve',
+        --[[\AppData\Local\nvim-data\lazy\mason-nvim-dap.nvim\lua\mason-nvim-dap\mappings\configurations.lua
+        -- under the above path paste this in the get_dll function. otherwise you will need to use set noshellslash
+        -- when you want to debug
+                --		
+if vim.fn.has('win64') or vim.fn.has('win32') then
+	vim.cmd('set noshellslash')
+end
+ 
+                --]]
+        'netcoredbg',
       },
     }
 

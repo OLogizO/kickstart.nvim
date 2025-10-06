@@ -88,5 +88,5 @@ function M.getChangedfiles(opts)
     :find()
 end
 
-M.getChangedfiles()
+-- M.getChangedfiles()
 return M

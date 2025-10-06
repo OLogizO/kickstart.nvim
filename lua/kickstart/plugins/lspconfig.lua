@@ -31,6 +31,8 @@ return {
     },
     config = function()
       -- personal remap: this line makes lsps work with unity. so i get autocompletion for monobehaviour and so on
+      -- Its set as a environmental path variable under D:\programming\omnisharp\content\LanguageServer\win-x64
+      -- which means its available through my whole system and i dont need to specify the path.
       vim.lsp.enable 'roslyn_ls'
       -- Brief aside: **What is LSP?**
       --
